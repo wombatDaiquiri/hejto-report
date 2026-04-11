@@ -156,24 +156,25 @@ def generate_report(username, data, output_file="report.png"):
     YELLOW = "#d29922"      # Attention / highlight
     PINK = "#f778ba"        # Pie / extra accent
 
-    fig = plt.figure(figsize=(24, 34))
+    fig = plt.figure(figsize=(24, 30))
     fig.patch.set_facecolor(BG)
 
     gs = GridSpec(
         5, 6, figure=fig,
-        hspace=0.42, wspace=0.38,
+        height_ratios=[0.35, 1, 1, 1, 1],
+        hspace=0.45, wspace=0.38,
         top=0.90, bottom=0.03, left=0.06, right=0.97,
     )
 
     def style_ax(ax, title="", ylabel="", xlabel="", grid_axis="y"):
         """Apply consistent modern styling to an axes."""
         ax.set_facecolor(CARD)
-        ax.set_title(title, color=TEXT, fontsize=13, fontweight="600", loc="left")
+        ax.set_title(title, color=TEXT, fontsize=16, fontweight="600", loc="left")
         if ylabel:
-            ax.set_ylabel(ylabel, color=TEXT_DIM, fontsize=10)
+            ax.set_ylabel(ylabel, color=TEXT_DIM, fontsize=12)
         if xlabel:
-            ax.set_xlabel(xlabel, color=TEXT_DIM, fontsize=10)
-        ax.tick_params(colors=TEXT_DIM, labelsize=9, length=0)
+            ax.set_xlabel(xlabel, color=TEXT_DIM, fontsize=12)
+        ax.tick_params(colors=TEXT_DIM, labelsize=11, length=0)
         for spine in ax.spines.values():
             spine.set_visible(False)
         if grid_axis:
@@ -182,18 +183,18 @@ def generate_report(username, data, output_file="report.png"):
 
     # ── Header ──────────────────────────────────────────────
     fig.text(
-        0.06, 0.975, f"@{username}",
-        fontsize=36, fontweight="bold", color=TEXT,
+        0.06, 0.98, f"@{username}",
+        fontsize=40, fontweight="bold", color=TEXT,
         va="top",
     )
     fig.text(
         0.06, 0.963, "hejto.pl user report",
-        fontsize=14, color=TEXT_DIM, va="top",
+        fontsize=17, color=TEXT_DIM, va="top",
     )
     fig.text(
         0.97, 0.975,
         "github.com/wombatDaiquiri/hejto-report",
-        fontsize=10, color=TEXT_DIM, va="top", ha="right",
+        fontsize=12, color=TEXT_DIM, va="top", ha="right",
         style="italic",
     )
 
@@ -227,9 +228,9 @@ def generate_report(username, data, output_file="report.png"):
         card.set_path_effects([pe.withSimplePatchShadow(offset=(1, -1), shadow_rgbFace=BG, alpha=0.5)])
         ax.add_patch(card)
         ax.text(0.5, 0.62, value, transform=ax.transAxes,
-                ha="center", va="center", fontsize=22, fontweight="bold", color=CYAN)
-        ax.text(0.5, 0.28, label, transform=ax.transAxes,
-                ha="center", va="center", fontsize=10, color=TEXT_DIM)
+                ha="center", va="center", fontsize=28, fontweight="bold", color=CYAN)
+        ax.text(0.5, 0.25, label, transform=ax.transAxes,
+                ha="center", va="center", fontsize=13, color=TEXT_DIM)
 
     # ── Profile info strip (figure-level text, no grid row) ──
     info_parts = [
@@ -245,8 +246,8 @@ def generate_report(username, data, output_file="report.png"):
         f"Most commented: \"{max_comments_post['title'][:65]}\" ({max(comments)} comments)"
     )
 
-    fig.text(0.515, 0.925, info_line, ha="center", va="center", fontsize=11, color=TEXT_DIM)
-    fig.text(0.515, 0.912, record_line, ha="center", va="center", fontsize=10, color=TEXT_DIM, style="italic")
+    fig.text(0.515, 0.935, info_line, ha="center", va="center", fontsize=14, color=TEXT_DIM)
+    fig.text(0.515, 0.918, record_line, ha="center", va="center", fontsize=13, color=TEXT_DIM, style="italic")
 
     # ── Row 1: Time series ─────────────────────────────────
     # Likes scatter
@@ -300,7 +301,7 @@ def generate_report(username, data, output_file="report.png"):
     step = max(1, n_months // 18)
     ax4.set_xticklabels(
         [m if i % step == 0 else "" for i, m in enumerate(month_labels)],
-        rotation=45, ha="right", fontsize=8,
+        rotation=45, ha="right", fontsize=10,
     )
 
     # Post type — donut chart
@@ -311,17 +312,17 @@ def generate_report(username, data, output_file="report.png"):
     wedges, texts, autotexts = ax5.pie(
         type_sizes, labels=type_labels, autopct="%1.0f%%",
         colors=colors_pie[:len(type_labels)],
-        textprops={"color": TEXT, "fontsize": 10},
+        textprops={"color": TEXT, "fontsize": 13},
         pctdistance=0.78,
         wedgeprops=dict(width=0.45, edgecolor=CARD, linewidth=2),
         startangle=90,
     )
     for at in autotexts:
-        at.set_fontsize(10)
+        at.set_fontsize(13)
         at.set_fontweight("bold")
         at.set_color(TEXT)
     ax5.set_facecolor(CARD)
-    ax5.set_title("Post Types", color=TEXT, fontsize=13, fontweight="600", loc="left", pad=14)
+    ax5.set_title("Post Types", color=TEXT, fontsize=16, fontweight="600", loc="left", pad=14)
 
     # ── Row 4: Tags + Communities ──────────────────────────
     ax6 = fig.add_subplot(gs[3, :4])
@@ -331,7 +332,7 @@ def generate_report(username, data, output_file="report.png"):
     # Value labels at end of bars
     for bar, val in zip(tag_bars, tag_counts_list):
         ax6.text(bar.get_width() + max(tag_counts_list) * 0.015, bar.get_y() + bar.get_height() / 2,
-                 str(val), va="center", fontsize=9, color=TEXT_DIM)
+                 str(val), va="center", fontsize=11, color=TEXT_DIM)
     style_ax(ax6, title="Top 15 Tags", xlabel="Usage count", grid_axis="x")
 
     ax7 = fig.add_subplot(gs[3, 4:])
@@ -340,7 +341,7 @@ def generate_report(username, data, output_file="report.png"):
     comm_bars = ax7.barh(comm_names, comm_counts_list, color=PURPLE, alpha=0.80, height=0.65, zorder=3)
     for bar, val in zip(comm_bars, comm_counts_list):
         ax7.text(bar.get_width() + max(comm_counts_list) * 0.02, bar.get_y() + bar.get_height() / 2,
-                 str(val), va="center", fontsize=9, color=TEXT_DIM)
+                 str(val), va="center", fontsize=11, color=TEXT_DIM)
     style_ax(ax7, title="Top Communities", xlabel="Posts", grid_axis="x")
 
     # ── Row 5: Weekday, Hourly, Likes histogram ───────────
