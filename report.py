@@ -21,6 +21,7 @@ from PIL import Image
 import requests
 
 from hejto_api import HejtoAPI
+from report_html import generate_html_report
 
 CACHE_DIR = "cache"
 
@@ -393,12 +394,21 @@ def generate_report(username, data, output_file="report.png"):
 def main():
     parser = argparse.ArgumentParser(description="Generate Hejto.pl user report")
     parser.add_argument("username", help="Hejto username to generate report for")
-    parser.add_argument("-o", "--output", default="report.png", help="Output image file")
+    parser.add_argument("-o", "--output", default="report.png", help="Output file (.png or .html)")
     parser.add_argument("--refresh", action="store_true", help="Force re-fetch data from API")
+    parser.add_argument("--html", action="store_true", help="Generate interactive HTML report")
     args = parser.parse_args()
 
     data = fetch_and_cache(args.username, force=args.refresh)
-    generate_report(args.username, data, output_file=args.output)
+
+    output = args.output
+    if args.html and not output.endswith(".html"):
+        output = output.rsplit(".", 1)[0] + ".html"
+
+    if output.endswith(".html") or args.html:
+        generate_html_report(args.username, data, output_file=output)
+    else:
+        generate_report(args.username, data, output_file=output)
 
 
 if __name__ == "__main__":
