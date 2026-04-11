@@ -147,7 +147,7 @@ def generate_report(username, data, output_file="report.png"):
 
     # Title / header
     fig.suptitle(
-        f"Hejto.pl Report: @{username}",
+        f"https://github.com/wombatDaiquiri/hejto-report for @{username}",
         fontsize=28, fontweight="bold", color="white", y=0.98,
     )
 
