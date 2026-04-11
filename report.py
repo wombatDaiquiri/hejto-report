@@ -7,13 +7,18 @@ import sys
 from collections import Counter
 from datetime import datetime
 
+import io
+
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import matplotlib.patheffects as pe
 from matplotlib.gridspec import GridSpec
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import matplotlib.font_manager as fm
 import numpy as np
+from PIL import Image
+import requests
 
 from hejto_api import HejtoAPI
 
@@ -182,19 +187,38 @@ def generate_report(username, data, output_file="report.png"):
             ax.set_axisbelow(True)
 
     # ── Header ──────────────────────────────────────────────
+    # Avatar
+    avatar_urls = profile.get("avatar", {}).get("urls", {})
+    avatar_url = avatar_urls.get("250x250") or avatar_urls.get("100x100")
+    avatar_x = 0.06
+    text_x = 0.06
+    if avatar_url:
+        try:
+            resp = requests.get(avatar_url, timeout=10)
+            resp.raise_for_status()
+            avatar_img = Image.open(io.BytesIO(resp.content)).convert("RGBA")
+            # Create circular mask
+            mask = Image.new("L", avatar_img.size, 0)
+            from PIL import ImageDraw
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse((0, 0, avatar_img.size[0], avatar_img.size[1]), fill=255)
+            avatar_img.putalpha(mask)
+            # Place avatar using a small axes
+            avatar_ax = fig.add_axes([0.04, 0.955, 0.045, 0.04])
+            avatar_ax.imshow(avatar_img)
+            avatar_ax.axis("off")
+            text_x = 0.095
+        except Exception:
+            pass  # Skip avatar on failure
+
     fig.text(
-        0.06, 0.98, f"@{username}",
+        text_x, 0.98, f"@{username}",
         fontsize=40, fontweight="bold", color=TEXT,
         va="top",
     )
     fig.text(
-        0.06, 0.963, "hejto.pl user report",
-        fontsize=17, color=TEXT_DIM, va="top",
-    )
-    fig.text(
-        0.97, 0.975,
-        "github.com/wombatDaiquiri/hejto-report",
-        fontsize=12, color=TEXT_DIM, va="top", ha="right",
+        text_x, 0.963, "github.com/wombatDaiquiri/hejto-report",
+        fontsize=14, color=TEXT_DIM, va="top",
         style="italic",
     )
 
