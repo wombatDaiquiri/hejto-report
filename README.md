@@ -2,7 +2,7 @@
 
 Scrape your [Hejto.pl](https://hejto.pl) profile data and generate a visual stats report.
 
-![Example report](https://github.com/wombatDaiquiri/hejtoscrape/raw/main/example_report.png)
+![Example report for @wombatDaiquiri](example_report.png)
 
 ## Features
 
