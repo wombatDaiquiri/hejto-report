@@ -505,9 +505,9 @@ Plotly.newPlot('tags', [{{
 }}], {{
   ...layout,
   title: {{ text: 'Top 15 Tags', font: {{ size: 15 }} }},
-  xaxis: {{ ...layout.xaxis, title: 'Usage count' }},
+  xaxis: {{ ...layout.xaxis, title: 'Usage count', type: 'linear' }},
   yaxis: {{ ...layout.yaxis, categoryorder: 'array', categoryarray: D.tag_names }},
-  margin: {{ ...layout.margin, l: 130 }},
+  margin: {{ ...layout.margin, l: 130, r: 55 }},
 }}, config);
 
 // Top communities
@@ -522,9 +522,9 @@ Plotly.newPlot('communities', [{{
 }}], {{
   ...layout,
   title: {{ text: 'Top Communities', font: {{ size: 15 }} }},
-  xaxis: {{ ...layout.xaxis, title: 'Posts' }},
+  xaxis: {{ ...layout.xaxis, title: 'Posts', type: 'linear' }},
   yaxis: {{ ...layout.yaxis, categoryorder: 'array', categoryarray: D.comm_names }},
-  margin: {{ ...layout.margin, l: 130 }},
+  margin: {{ ...layout.margin, l: 130, r: 55 }},
 }}, config);
 
 // Weekday
@@ -538,6 +538,7 @@ Plotly.newPlot('weekday', [{{
 }}], {{
   ...layout,
   title: {{ text: 'Posts by Day of Week', font: {{ size: 15 }} }},
+  xaxis: {{ ...layout.xaxis, type: 'category' }},
   yaxis: {{ ...layout.yaxis, title: 'Posts' }},
 }}, config);
 
@@ -552,7 +553,7 @@ Plotly.newPlot('hourly', [{{
 }}], {{
   ...layout,
   title: {{ text: 'Posts by Hour of Day', font: {{ size: 15 }} }},
-  xaxis: {{ ...layout.xaxis, title: 'Hour (24h)', dtick: 2 }},
+  xaxis: {{ ...layout.xaxis, title: 'Hour (24h)', type: 'linear', dtick: 2 }},
   yaxis: {{ ...layout.yaxis, title: 'Posts' }},
 }}, config);
 
@@ -566,7 +567,7 @@ Plotly.newPlot('likes-dist', [{{
 }}], {{
   ...layout,
   title: {{ text: 'Likes Distribution', font: {{ size: 15 }} }},
-  xaxis: {{ ...layout.xaxis, title: 'Likes' }},
+  xaxis: {{ ...layout.xaxis, title: 'Likes', type: 'linear' }},
   yaxis: {{ ...layout.yaxis, title: 'Frequency' }},
 }}, config);
 </script>
