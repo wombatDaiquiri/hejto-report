@@ -57,6 +57,14 @@ pip3 install -r requirements.txt
 
 You should see it downloading some stuff. Wait until it finishes.
 
+### Step 3b: Install the browser (needed for PNG reports)
+
+PNG reports are rendered using a headless browser. Run this once after installing dependencies:
+
+```bash
+python -m playwright install chromium
+```
+
 ### Step 4: Generate a report
 
 Now run this command, replacing `USERNAME` with any Hejto.pl username:
@@ -65,27 +73,40 @@ Now run this command, replacing `USERNAME` with any Hejto.pl username:
 python report.py USERNAME
 ```
 
+This creates a `report.png` image. To generate an **interactive HTML report** instead:
+
+```bash
+python report.py USERNAME --html
+```
+
+The HTML version lets you hover over any datapoint to see exact values, and click scatter plot points or table rows to open the original post on Hejto.pl.
+
 For example, to generate a report for the user **wombatDaiquiri**:
 
 ```bash
 python report.py wombatDaiquiri
+python report.py wombatDaiquiri --html
 ```
 
-(Again, if `python` doesn't work, try `python3`.)
+(If `python` doesn't work, try `python3`.)
 
 ### Step 5: See your report
 
-When it finishes, a file called `USERNAME_report.png` will appear in the same folder. Open it to see the charts!
+- **PNG**: A file called `report.png` will appear in the same folder. Open it to see the charts.
+- **HTML**: A file called `report.html` will appear. Open it in your browser for interactive charts with hover tooltips, clickable links to top posts, and more.
 
 ---
 
 ## Extra options
 
-**Save the image with a custom name:**
+**Save with a custom name:**
 
 ```bash
 python report.py wombatDaiquiri -o my_cool_report.png
+python report.py wombatDaiquiri -o my_cool_report.html
 ```
+
+Using a `.html` extension automatically generates the HTML version (no `--html` flag needed).
 
 **Re-download fresh data (if you ran it before and want updated stats):**
 
@@ -102,7 +123,8 @@ python report.py wombatDaiquiri --refresh
 - Charts showing likes and comments over time
 - Which days and hours they post the most
 - Their favorite tags and communities
-- And more
+- Likes distribution histogram
+- Top 20 posts by likes and by comments (HTML only, with links)
 
 ---
 
