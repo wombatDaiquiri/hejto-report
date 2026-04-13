@@ -28,6 +28,7 @@ def generate_html_report(username, data, output_file="report.html", png_mode=Fal
     community_counter = Counter()
     weekday_counter = Counter()
     hour_counter = Counter()
+    hour_likes = {}  # hour -> list of like counts
     types_counter = Counter()
     monthly_counter = Counter()
 
@@ -49,6 +50,7 @@ def generate_html_report(username, data, output_file="report.html", png_mode=Fal
 
         weekday_counter[dt.strftime("%A")] += 1
         hour_counter[dt.hour] += 1
+        hour_likes.setdefault(dt.hour, []).append(p.get("num_likes", 0))
         monthly_counter[dt.strftime("%Y-%m")] += 1
 
     total_likes = sum(likes)
@@ -98,6 +100,12 @@ def generate_html_report(username, data, output_file="report.html", png_mode=Fal
     # Hours
     hours = list(range(24))
     hour_counts = [hour_counter.get(h, 0) for h in hours]
+
+    # Average likes per hour
+    avg_likes_by_hour = [
+        round(sum(hour_likes.get(h, [0])) / max(len(hour_likes.get(h, [0])), 1), 1)
+        for h in hours
+    ]
 
     # Post types
     type_labels = [t[0] for t in types_counter.most_common()]
@@ -174,6 +182,7 @@ def generate_html_report(username, data, output_file="report.html", png_mode=Fal
         "weekday_counts": weekday_counts,
         "hours": hours,
         "hour_counts": hour_counts,
+        "avg_likes_by_hour": avg_likes_by_hour,
         "type_labels": type_labels,
         "type_sizes": type_sizes,
         "all_likes": likes,
@@ -393,6 +402,10 @@ def generate_html_report(username, data, output_file="report.html", png_mode=Fal
   <div class="chart-box" id="likes-dist"></div>
 </div>
 
+<div class="chart-grid">
+  <div class="chart-box full" id="likes-by-hour"></div>
+</div>
+
 {"" if png_mode else f"""<h2>Top Posts by Likes</h2>
 <table>
   <thead><tr><th>#</th><th>Title</th><th>Likes</th><th>Comments</th><th>Date</th></tr></thead>
@@ -569,6 +582,21 @@ Plotly.newPlot('likes-dist', [{{
   title: {{ text: 'Likes Distribution', font: {{ size: 15 }} }},
   xaxis: {{ ...layout.xaxis, title: 'Likes', type: 'linear' }},
   yaxis: {{ ...layout.yaxis, title: 'Frequency' }},
+}}, config);
+
+// Average likes by hour of day
+const peakAvgHour = Math.max(...D.avg_likes_by_hour);
+Plotly.newPlot('likes-by-hour', [{{
+  x: D.hours, y: D.avg_likes_by_hour,
+  text: D.avg_likes_by_hour.map(v => v.toString()),
+  hovertemplate: 'Hour: %{{x}}:00<br>Avg likes: %{{y}}<extra></extra>',
+  type: 'bar',
+  marker: {{ color: D.avg_likes_by_hour.map(v => v === peakAvgHour ? '#f78166' : '#3fb950'), opacity: 0.85 }},
+}}], {{
+  ...layout,
+  title: {{ text: 'Average Likes by Hour of Day', font: {{ size: 15 }} }},
+  xaxis: {{ ...layout.xaxis, title: 'Hour (24h)', type: 'linear', dtick: 1 }},
+  yaxis: {{ ...layout.yaxis, title: 'Avg Likes' }},
 }}, config);
 </script>
 </body>

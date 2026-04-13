@@ -68,7 +68,8 @@ def generate_png_report(username, data, output_file="report.png"):
                 () => {
                     const ids = ['likes-scatter', 'comments-scatter', 'cum-likes',
                                  'monthly', 'tags', 'communities',
-                                 'weekday', 'hourly', 'likes-dist'];
+                                 'weekday', 'hourly', 'likes-dist',
+                                 'likes-by-hour'];
                     return ids.every(id => {
                         const el = document.getElementById(id);
                         return el && el.data && el.data.length > 0;
